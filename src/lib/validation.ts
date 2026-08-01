@@ -34,3 +34,13 @@ export const LinkInput = z.discriminatedUnion("type", [
 ]);
 
 export type LinkInputValue = z.infer<typeof LinkInput>;
+
+export const DraftLinkInput = LinkInput.and(
+  z.object({
+    id: z.string().uuid(),
+    isNew: z.boolean(),
+    position: z.number().int().min(0),
+  }),
+);
+
+export type DraftLinkInputValue = z.infer<typeof DraftLinkInput>;

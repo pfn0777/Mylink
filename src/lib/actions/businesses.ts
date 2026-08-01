@@ -4,12 +4,15 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { put } from "@vercel/blob";
-import { eq, ne, and, desc } from "drizzle-orm";
+import { eq, ne, and, desc, inArray } from "drizzle-orm";
+import type { BatchItem } from "drizzle-orm/batch";
 import { db } from "@/lib/db/client";
-import { businesses } from "@/lib/db/schema";
+import { businesses, links } from "@/lib/db/schema";
 import { requireAdminSession } from "@/lib/auth/require-admin";
 import { validateSlugFormat, type SlugFormatError } from "@/lib/slug";
 import { isValidId } from "@/lib/id";
+import { DraftLinkInput, type DraftLinkInputValue } from "@/lib/validation";
+import { computeLinksDiff } from "@/lib/links-diff";
 
 const BusinessInput = z.object({
   name: z.string().min(1),
@@ -95,11 +98,24 @@ export async function createBusiness(
   redirect("/dashboard");
 }
 
-export async function updateBusiness(
+export interface BusinessEditFormState {
+  error?: string;
+  linkErrors?: Record<string, string>;
+}
+
+function extractItemId(item: unknown): string | undefined {
+  if (typeof item === "object" && item !== null && "id" in item) {
+    const id = (item as { id: unknown }).id;
+    return typeof id === "string" ? id : undefined;
+  }
+  return undefined;
+}
+
+export async function updateBusinessWithLinks(
   businessId: string,
-  _prevState: BusinessFormState | undefined,
+  _prevState: BusinessEditFormState | undefined,
   formData: FormData,
-): Promise<BusinessFormState> {
+): Promise<BusinessEditFormState> {
   await requireAdminSession();
 
   if (!isValidId(businessId)) {
@@ -121,12 +137,12 @@ export async function updateBusiness(
     return { error: slugFormatErrorMessage(formatError) };
   }
 
-  const [existing] = await db
+  const [existingSlug] = await db
     .select({ id: businesses.id })
     .from(businesses)
     .where(and(eq(businesses.slug, slug), ne(businesses.id, businessId)))
     .limit(1);
-  if (existing) {
+  if (existingSlug) {
     return { error: "Bu slug band, boshqasini tanlang" };
   }
 
@@ -137,10 +153,67 @@ export async function updateBusiness(
     return { error: err instanceof Error ? err.message : "Logo yuklashda xatolik" };
   }
 
-  await db
-    .update(businesses)
-    .set({ name, slug, description, updatedAt: new Date(), ...(logoUrl ? { logoUrl } : {}) })
-    .where(eq(businesses.id, businessId));
+  let rawLinks: unknown;
+  try {
+    rawLinks = JSON.parse(String(formData.get("linksJson") ?? "[]"));
+  } catch {
+    return { error: "Linklar ma'lumotida xatolik" };
+  }
+  if (!Array.isArray(rawLinks)) {
+    return { error: "Linklar ma'lumotida xatolik" };
+  }
+
+  const validLinks: DraftLinkInputValue[] = [];
+  const linkErrors: Record<string, string> = {};
+  for (const item of rawLinks) {
+    const result = DraftLinkInput.safeParse(item);
+    if (result.success) {
+      validLinks.push(result.data);
+    } else {
+      const id = extractItemId(item);
+      if (id) linkErrors[id] = result.error.issues[0]?.message ?? "Noto'g'ri qiymat";
+    }
+  }
+  if (Object.keys(linkErrors).length > 0) {
+    return { linkErrors };
+  }
+
+  const existingRows = await db.select({ id: links.id }).from(links).where(eq(links.businessId, businessId));
+  const existingIds = existingRows.map((row) => row.id);
+  const { toUpdate, toInsert, toDeleteIds } = computeLinksDiff(existingIds, validLinks);
+
+  const batchQueries: BatchItem<"pg">[] = [
+    db
+      .update(businesses)
+      .set({ name, slug, description, updatedAt: new Date(), ...(logoUrl ? { logoUrl } : {}) })
+      .where(eq(businesses.id, businessId)),
+    ...toUpdate.map((link) =>
+      db
+        .update(links)
+        .set({ type: link.type, label: link.label, value: link.value, position: link.position })
+        .where(and(eq(links.id, link.id), eq(links.businessId, businessId))),
+    ),
+  ];
+
+  if (toDeleteIds.length > 0) {
+    batchQueries.push(db.delete(links).where(and(eq(links.businessId, businessId), inArray(links.id, toDeleteIds))));
+  }
+  if (toInsert.length > 0) {
+    batchQueries.push(
+      db.insert(links).values(
+        toInsert.map((link) => ({
+          id: link.id,
+          businessId,
+          type: link.type,
+          label: link.label,
+          value: link.value,
+          position: link.position,
+        })),
+      ),
+    );
+  }
+
+  await db.batch(batchQueries as [BatchItem<"pg">, ...BatchItem<"pg">[]]);
 
   redirect("/dashboard");
 }
