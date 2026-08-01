@@ -50,6 +50,12 @@ Before considering any change done: `npm run typecheck && npm run lint && npm te
 
 **Logos**: uploaded via `@vercel/blob`'s `put(..., { access: "public" })` inside the same Server Action that creates/updates a business (`src/lib/actions/businesses.ts`), not a separate upload endpoint.
 
+**Business edit is one form, not per-link Server Actions.** `/businesses/[id]/edit` (`src/components/admin/BusinessEditForm.tsx`) holds business fields *and* the links list in one client-side draft state, submitted through a single `<form>` / single `updateBusinessWithLinks` action (`src/lib/actions/businesses.ts`) — nothing touches the DB until "Saqlash" is clicked. Links are serialized into a hidden `linksJson` field (JSON array, recomputed every render so `position` is always just the array index, never tracked separately) instead of each link having its own action/round-trip. The action diffs the submitted array against the DB's current link ids via `computeLinksDiff()` (`src/lib/links-diff.ts`, pure and unit-tested) to derive inserts/updates/deletes, then writes all of them in one `db.batch([...])` call. `BusinessForm.tsx` (used only by `/businesses/new`, which has no links yet — the business doesn't exist until it's created) and `BusinessEditForm.tsx` are intentionally separate, non-nesting components with some duplicated field JSX, not one wrapping the other — `BusinessForm` owns its own `<form>`/`useActionState`, and a `<form>` can't nest inside a `<form>`.
+
+**`drizzle-orm/neon-http` has no `.transaction()`** — it throws `"No transactions support in neon-http driver"` at runtime. Use `db.batch([...])` instead (see `updateBusinessWithLinks`): it runs independent, pre-built query objects atomically via Neon's HTTP batch endpoint, but unlike a real interactive transaction, no statement can read another's runtime result (e.g. insert-then-use-the-generated-id-later doesn't work). Fine as long as every row's id is already known before the batch is built.
+
+**Drag-and-drop reordering** (`src/components/admin/LinkRow.tsx`, `@dnd-kit/core` + `@dnd-kit/sortable`) needs an explicit `id` prop on `<DndContext>` — without it, dnd-kit's auto-generated `aria-describedby` id differs between server-render and client hydration and Next throws a hydration-mismatch error. Also: `lucide-react` v1.x dropped brand/social icons (no `Instagram` export) — `src/lib/link-type-meta.ts` uses `Camera` as a stand-in for the Instagram link type.
+
 ## Environment variables
 
 Local dev uses `.env.local` (gitignored; `.env.example` documents the keys and *is* committed). Two gotchas:
@@ -61,7 +67,7 @@ Required vars: `DATABASE_URL` / `DATABASE_URL_UNPOOLED` (Neon; pooled for runtim
 
 ## Testing
 
-Per project convention, tests cover business logic, not UI/components: `tests/unit/slug.test.ts`, `validation.test.ts`, `qr.test.ts`. Core admin/public flows (create business → add links → view public page → generate QR) are verified manually in a real browser, not via a component test suite — do that before marking a UI-touching task done.
+Per project convention, tests cover business logic, not UI/components: `tests/unit/slug.test.ts`, `validation.test.ts`, `qr.test.ts`, `links-diff.test.ts`. Core admin/public flows (create business → add links → view public page → generate QR) are verified manually in a real browser, not via a component test suite — do that before marking a UI-touching task done.
 
 ## Deployment
 
