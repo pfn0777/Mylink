@@ -1,0 +1,12 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - heading "Admin kirish" [level=1] [ref=e4]
+    - generic [ref=e5]:
+      - generic [ref=e6]: Email
+      - textbox "Email" [ref=e7]
+    - generic [ref=e8]:
+      - generic [ref=e9]: Parol
+      - textbox "Parol" [ref=e10]
+    - paragraph [ref=e13]: Email yoki parol noto'g'ri
+    - button "Kirish" [ref=e11]
+  - alert [ref=e12]

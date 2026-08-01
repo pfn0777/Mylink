@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(login, undefined);
+  const hasError = Boolean(state?.error);
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -16,15 +17,36 @@ export default function LoginPage() {
 
         <div className="space-y-1">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" required autoComplete="username" />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="username"
+            defaultValue={state?.email}
+            aria-invalid={hasError}
+            aria-describedby={hasError ? "login-error" : undefined}
+          />
         </div>
 
         <div className="space-y-1">
           <Label htmlFor="password">Parol</Label>
-          <Input id="password" name="password" type="password" required autoComplete="current-password" />
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            required
+            autoComplete="current-password"
+            aria-invalid={hasError}
+            aria-describedby={hasError ? "login-error" : undefined}
+          />
         </div>
 
-        {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+        {state?.error && (
+          <p id="login-error" role="alert" className="text-sm text-destructive">
+            {state.error}
+          </p>
+        )}
 
         <Button type="submit" disabled={isPending} className="w-full">
           {isPending ? "Tekshirilmoqda..." : "Kirish"}

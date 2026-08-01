@@ -7,6 +7,7 @@ import { createSessionToken, SESSION_COOKIE_NAME } from "@/lib/auth/session";
 
 export interface LoginState {
   error?: string;
+  email?: string;
 }
 
 export async function login(_prevState: LoginState | undefined, formData: FormData): Promise<LoginState> {
@@ -21,7 +22,7 @@ export async function login(_prevState: LoginState | undefined, formData: FormDa
 
   const passwordMatches = await verifyPassword(password, adminPasswordHash);
   if (email !== adminEmail || !passwordMatches) {
-    return { error: "Email yoki parol noto'g'ri" };
+    return { error: "Email yoki parol noto'g'ri", email };
   }
 
   const token = await createSessionToken(email);
