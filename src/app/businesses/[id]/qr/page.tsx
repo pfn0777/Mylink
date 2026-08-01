@@ -14,7 +14,7 @@ export default async function BusinessQrPage({ params }: { params: Promise<{ id:
   return (
     <div className="p-6">
       <h1 className="mb-4 text-xl font-semibold">QR kod — {business.name}</h1>
-      <QrCustomizer publicUrl={publicUrl} />
+      <QrCustomizer publicUrl={publicUrl} businessName={business.name} logoUrl={business.logoUrl} />
     </div>
   );
 }

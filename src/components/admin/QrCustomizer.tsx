@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { getQrPreview, getQrSvgMarkup } from "@/lib/actions/qr";
+import { getLogoDataUrl, getQrPreview, getQrSvgMarkup } from "@/lib/actions/qr";
+import { renderPosterPng, QR_PRINT_SIZE } from "@/lib/canvas/poster";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 interface QrCustomizerProps {
   publicUrl: string;
+  businessName: string;
+  logoUrl: string | null;
 }
 
 const DEFAULT_SIZE = 300;
@@ -16,12 +19,13 @@ const MAX_SIZE = 600;
 const SIZE_STEP = 10;
 const PREVIEW_DEBOUNCE_MS = 200;
 
-export function QrCustomizer({ publicUrl }: QrCustomizerProps) {
+export function QrCustomizer({ publicUrl, businessName, logoUrl }: QrCustomizerProps) {
   const [foregroundColor, setForegroundColor] = useState("#000000");
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [size, setSize] = useState(DEFAULT_SIZE);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isGeneratingPoster, setIsGeneratingPoster] = useState(false);
 
   useEffect(() => {
     let stale = false;
@@ -54,6 +58,25 @@ export function QrCustomizer({ publicUrl }: QrCustomizerProps) {
     a.download = "qr-code.svg";
     a.click();
     URL.revokeObjectURL(blobUrl);
+  }
+
+  async function downloadPoster() {
+    setIsGeneratingPoster(true);
+    try {
+      const qrDataUrl = await getQrPreview(publicUrl, { foregroundColor, backgroundColor, size: QR_PRINT_SIZE });
+      const logoDataUrl = logoUrl ? await getLogoDataUrl(logoUrl) : null;
+      const blob = await renderPosterPng({ businessName, qrDataUrl, logoDataUrl });
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = "poster-a4.png";
+      a.click();
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("downloadPoster: failed to generate poster", error);
+    } finally {
+      setIsGeneratingPoster(false);
+    }
   }
 
   return (
@@ -110,6 +133,9 @@ export function QrCustomizer({ publicUrl }: QrCustomizerProps) {
         </Button>
         <Button type="button" variant="outline" onClick={downloadSvg}>
           SVG yuklash
+        </Button>
+        <Button type="button" variant="secondary" disabled={isGeneratingPoster} onClick={downloadPoster}>
+          {isGeneratingPoster ? "Poster tayyorlanmoqda..." : "Poster (A4) yuklash"}
         </Button>
       </div>
 
