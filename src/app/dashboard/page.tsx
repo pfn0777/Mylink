@@ -27,7 +27,7 @@ export default async function DashboardPage() {
       {businessList.length === 0 ? (
         <p className="mt-6 text-sm text-muted-foreground">Hali birorta biznes yo&apos;q.</p>
       ) : (
-        <ul className="mt-6 space-y-3">
+        <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {businessList.map((business) => (
             <li key={business.id} className="flex gap-3 rounded-lg border p-4">
               {business.logoUrl && (

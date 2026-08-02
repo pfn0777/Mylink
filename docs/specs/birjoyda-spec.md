@@ -37,7 +37,7 @@ SVG, and can see/edit/delete all businesses from a list view.
    renderer) rather than calling a third-party API (mylink.asia used goQR) —
    avoids an external dependency and rate limits, and keeps color/size
    customization fully in our control.
-5. **Public page route is `/[slug]`** at the root (e.g. `mylink-clone.app/dunyouspa`),
+5. **Public page route is `/[slug]`** at the root (e.g. `birjoyda.vercel.app/dunyouspa`),
    matching the reference. A fixed reserved-word list (`admin`, `login`,
    `api`, `dashboard`, `_next`, etc.) prevents a business slug from colliding
    with an app route.
@@ -233,13 +233,15 @@ Per project convention: **tests target business logic, not UI.**
       color/background/size, downloadable as PNG and SVG.
 - [x] `npm run build`, `npm run typecheck`, and `npm test` all pass.
 
-Deployed and verified live at https://mylink-clone.vercel.app (2026-08-01).
+Deployed and verified live at https://mylink-clone.vercel.app (2026-08-01);
+Vercel project and its subdomain renamed to https://birjoyda.vercel.app
+(2026-08-02) — the old URL now redirects here automatically.
 
 ## Open Questions
 
-1. Final brand name decided: **BirJoyda**. Domain is still deferred — using
-   the placeholder Vercel subdomain `mylink-clone.vercel.app` until a real
-   domain is chosen.
+1. Final brand name decided: **BirJoyda**, and the Vercel project/subdomain
+   now match (`birjoyda.vercel.app`). A real custom domain is still not
+   chosen — using the Vercel subdomain until one is picked.
 2. Exact visual design of the public page — implemented as a dark-gradient
    card (logo, name, description, colored link buttons), inspired by the
    mylink.asia reference; can be revisited later.

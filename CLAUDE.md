@@ -71,12 +71,12 @@ Per project convention, tests cover business logic, not UI/components: `tests/un
 
 ## Deployment
 
-Vercel project `mylink-clone` (team `pfn0777s-projects`), Neon Postgres + Blob store connected via Vercel's Marketplace integrations. Two things that bit us once and could again:
+Vercel project `birjoyda` (team `pfn0777s-projects`), Neon Postgres + Blob store connected via Vercel's Marketplace integrations. Two things that bit us once and could again:
 
 - If a Vercel project is created (`vercel project add`) before any source code exists, its Framework Preset can get stuck on "Other," which builds fine but makes every route 404 at the edge post-deploy (routing/function wiring never gets applied). Fix: `vercel project update <name> --framework nextjs`, then redeploy.
 - Vercel's "Deployment Protection" (SSO/Vercel Authentication), if enabled, blocks unauthenticated access to *all* non-custom-domain URLs — including the `/[slug]` public pages that must be publicly reachable. It must stay disabled (or scoped to exclude the routes that need to be public) for this app to work as intended.
-- The project's brand name is now **BirJoyda** (`package.json` name: `birjoyda`), but the Vercel project and its subdomain were intentionally left as `mylink-clone` — renaming a live Vercel project changes its URL, so that's a separate, deliberate step, not done as part of the branding rename.
+- Renaming a Vercel project (Settings → General → Project Name) does **not** move its `*.vercel.app` domain — that has to be added separately under Settings → Domains. Vercel does automatically set up a redirect from the old default domain to the new one once the new one is added, so old links/QR codes keep working.
 
-Live at https://mylink-clone.vercel.app (placeholder domain; no custom domain chosen yet).
+Live at https://birjoyda.vercel.app (the old https://mylink-clone.vercel.app now redirects here; no custom domain chosen yet).
 
 @AGENTS.md
