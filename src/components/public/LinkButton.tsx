@@ -5,7 +5,10 @@ import type { LinkTypeValue } from "@/lib/validation";
 const TYPE_COLORS: Record<LinkTypeValue, { bg: string; hoverBg: string }> = {
   phone: { bg: "bg-green-600", hoverBg: "hover:bg-green-700" },
   telegram: { bg: "bg-sky-500", hoverBg: "hover:bg-sky-600" },
-  instagram: { bg: "bg-fuchsia-600", hoverBg: "hover:bg-fuchsia-700" },
+  instagram: {
+    bg: "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600",
+    hoverBg: "hover:brightness-90",
+  },
   maps: { bg: "bg-red-600", hoverBg: "hover:bg-red-700" },
   custom: { bg: "bg-slate-700", hoverBg: "hover:bg-slate-800" },
 };

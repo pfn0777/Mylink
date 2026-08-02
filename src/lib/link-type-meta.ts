@@ -1,11 +1,13 @@
-import { Phone, Send, Camera, MapPin, Link as LinkIcon, type LucideIcon } from "lucide-react";
+import { Phone, Send, MapPin, Link as LinkIcon } from "lucide-react";
+import { InstagramIcon } from "@/components/icons/InstagramIcon";
+import type { ComponentType } from "react";
 import type { LinkTypeValue } from "@/lib/validation";
 
 interface LinkTypeMeta {
   label: string;
   placeholder: string;
   inputType: "tel" | "text" | "url";
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
   badgeClass: string;
 }
 
@@ -28,8 +30,8 @@ export const LINK_TYPE_META: Record<LinkTypeValue, LinkTypeMeta> = {
     label: "Instagram",
     placeholder: "https://instagram.com/username",
     inputType: "text",
-    icon: Camera,
-    badgeClass: "bg-fuchsia-100 text-fuchsia-600",
+    icon: InstagramIcon,
+    badgeClass: "bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white",
   },
   maps: {
     label: "Google Maps",
