@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 
-export const SESSION_COOKIE_NAME = "mylink_session";
+export const SESSION_COOKIE_NAME = "birjoyda_session";
 const SESSION_DURATION = "30d";
 const ALG = "HS256";
 

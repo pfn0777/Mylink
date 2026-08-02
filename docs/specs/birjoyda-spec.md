@@ -1,6 +1,6 @@
-# Spec: MyLink Clone (admin-only link-in-bio + QR generator)
+# Spec: BirJoyda (admin-only link-in-bio + QR generator)
 
-_Source intent: [docs/intent/mylink.md](../intent/mylink.md)_
+_Source intent: [docs/intent/birjoyda.md](../intent/birjoyda.md)_
 
 _Revision note (2026-08-01): originally speced against Supabase. Pivoted to
 Vercel Postgres (Neon) + Vercel Blob + custom admin auth after the user's
@@ -237,8 +237,9 @@ Deployed and verified live at https://mylink-clone.vercel.app (2026-08-01).
 
 ## Open Questions
 
-1. Final brand/domain name — deferred; using the placeholder Vercel subdomain
-   `mylink-clone.vercel.app` until a real domain/brand is decided.
+1. Final brand name decided: **BirJoyda**. Domain is still deferred — using
+   the placeholder Vercel subdomain `mylink-clone.vercel.app` until a real
+   domain is chosen.
 2. Exact visual design of the public page — implemented as a dark-gradient
    card (logo, name, description, colored link buttons), inspired by the
    mylink.asia reference; can be revisited later.

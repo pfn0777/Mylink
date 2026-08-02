@@ -1,4 +1,4 @@
-# Intent: MyLink Clone (nom hali tanlanmagan)
+# Intent: BirJoyda
 
 _Confirmed via interview-me skill, 2026-08-01._
 
@@ -49,8 +49,8 @@ bog'liq bo'lmagan) o'z versiyasini qurmoqchi.
 
 - Stack: Next.js + Supabase (Postgres + Auth + Storage — logo uchun) +
   Vercel hosting (mavjud MCP sozlamalariga mos).
-- Domen/brend nomi hali tanlanmagan — boshida Vercel subdomain bilan
-  ishlanadi, keyinroq real domen ulanadi.
+- Brend nomi tanlandi: **BirJoyda**. Domen hali tanlanmagan — boshida Vercel
+  subdomain bilan ishlanadi, keyinroq real domen ulanadi.
 - Dizayn: tayyor uslub berilmagan — link-in-bio saytlaridan (internetdan)
   ilhom olib, mos variant tanlanadi (implementatsiya bosqichida).
 

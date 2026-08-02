@@ -30,7 +30,7 @@ export function PublicBusinessPage({ business, links }: PublicBusinessPageProps)
           )}
         </div>
 
-        <p className="mt-8 text-xs text-slate-500">Powered by MyLink</p>
+        <p className="mt-8 text-xs text-slate-500">Powered by BirJoyda</p>
       </div>
     </div>
   );

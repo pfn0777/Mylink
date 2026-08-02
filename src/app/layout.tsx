@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MyLink Clone",
+  title: "BirJoyda",
   description: "Admin tool for link-in-bio pages and QR codes",
 };
 

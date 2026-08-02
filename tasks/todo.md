@@ -1,4 +1,4 @@
-# Task List: MyLink Clone
+# Task List: BirJoyda
 
 _Plan: [tasks/plan.md](./plan.md)_
 
@@ -332,6 +332,6 @@ full flow in production.
 ---
 
 ## Checkpoint: Complete
-- [ ] All success criteria in [docs/specs/mylink-spec.md](../docs/specs/mylink-spec.md) are met
+- [ ] All success criteria in [docs/specs/birjoyda-spec.md](../docs/specs/birjoyda-spec.md) are met
 - [ ] `npm run build`, `npm run typecheck`, `npm test` all pass
 - [ ] Ready for human review

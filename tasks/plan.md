@@ -1,7 +1,7 @@
-# Implementation Plan: MyLink Clone
+# Implementation Plan: BirJoyda
 
-_Spec: [docs/specs/mylink-spec.md](../docs/specs/mylink-spec.md)_
-_Intent: [docs/intent/mylink.md](../docs/intent/mylink.md)_
+_Spec: [docs/specs/birjoyda-spec.md](../docs/specs/birjoyda-spec.md)_
+_Intent: [docs/intent/birjoyda.md](../docs/intent/birjoyda.md)_
 
 _Revision note (2026-08-01): Task 2 and Task 6 below were re-scoped from
 Supabase to Vercel Postgres (Neon)/Drizzle + Vercel Blob + custom admin auth
